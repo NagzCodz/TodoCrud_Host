@@ -6,11 +6,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddDbContext<TodoContext>(options =>
 {
-    var connectionString = builder.Configuration.GetConnectionString("PostgresConnection") ?? builder.Configuration.GetConnectionString("DefaultConnection");
-    if (connectionString.Contains("Host=")) // PostgreSQL
-        options.UseNpgsql(connectionString);
-    else // SQLite
-        options.UseSqlite(connectionString);
+    var connectionString = builder.Configuration.GetConnectionString("PostgresConnection");
+    if (string.IsNullOrEmpty(connectionString))
+        throw new InvalidOperationException("PostgresConnection is missing");
+    options.UseNpgsql(connectionString); // Always use PostgreSQL in production
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -35,7 +34,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-app.Urls.Clear(); // Clear default ports
+app.Urls.Clear();
 app.Urls.Add($"http://0.0.0.0:{port}");
 
 app.Run();
