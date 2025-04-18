@@ -7,6 +7,7 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<TodoContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("PostgresConnection");
+    Console.WriteLine($"Connection String: {connectionString}"); // Debug log
     if (string.IsNullOrEmpty(connectionString))
         throw new InvalidOperationException("PostgresConnection is missing");
     options.UseNpgsql(connectionString);
