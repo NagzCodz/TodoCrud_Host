@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddControllers();
 builder.Services.AddDbContext<TodoContext>(options =>
 {
@@ -19,21 +17,25 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// app.UseHttpsRedirection();
+if (app.Environment.IsProduction())
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<TodoContext>();
+    db.Database.Migrate();
+}
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
-// Use PORT environment variable for Render
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+app.Urls.Clear(); // Clear default ports
 app.Urls.Add($"http://0.0.0.0:{port}");
 
 app.Run();
