@@ -4,10 +4,9 @@ EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ["Todoapi/Todoapi.csproj", "Todoapi/"]
-RUN dotnet restore "Todoapi/Todoapi.csproj"
-COPY Todoapi/ Todoapi/
-WORKDIR /src/Todoapi
+COPY ["Todoapi.csproj", "."]
+RUN dotnet restore "Todoapi.csproj"
+COPY . .
 RUN dotnet build "Todoapi.csproj" -c Release -o /app/build
 
 FROM build AS publish
