@@ -9,7 +9,7 @@ builder.Services.AddDbContext<TodoContext>(options =>
     var connectionString = builder.Configuration.GetConnectionString("PostgresConnection");
     if (string.IsNullOrEmpty(connectionString))
         throw new InvalidOperationException("PostgresConnection is missing");
-    options.UseNpgsql(connectionString); // Always use PostgreSQL in production
+    options.UseNpgsql(connectionString);
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
